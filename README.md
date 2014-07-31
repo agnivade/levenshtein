@@ -26,7 +26,7 @@ func main() {
 	if err != nil {
 	  fmt.Errorf("Error returned- %s", err)
 	}
-	fmt.Printf("The distance between %v and %v is %v\n",
+	fmt.Printf("The distance between %s and %s is %d\n",
 		s1, s2, distance) // -> The distance between kitten and sitting is 3
 }
 
