@@ -1,4 +1,4 @@
-// This is a Go implementation to calculate Levenshtein Distance
+// This is a Go implementation to calculate Levenshtein Distance.
 // Implementation taken from
 // http://en.wikipedia.org/wiki/Levenshtein_distance#Iterative_with_two_matrix_rows
 package levenshtein
