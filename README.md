@@ -6,7 +6,7 @@ levenshtein
 Install
 -------
 
-    go get github.com/arbovm/levenshtein
+    go get github.com/agnivade/levenshtein
 
 Example
 -------
