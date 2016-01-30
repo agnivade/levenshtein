@@ -1,4 +1,5 @@
-// This is a Go implementation to calculate Levenshtein Distance.
+// Package levenshtein is a Go implementation to calculate Levenshtein Distance.
+//
 // Implementation taken from
 // http://en.wikipedia.org/wiki/Levenshtein_distance#Iterative_with_two_matrix_rows
 package levenshtein
@@ -24,13 +25,13 @@ func ComputeDistance(s1, s2 string) (n int, err error) {
 
 	x := make([]int, len(s2)+1)
 	y := make([]int, len(s2)+1)
-	for i, _ := range x {
+	for i := range x {
 		x[i] = i
 	}
-	for i, _ := range s1 {
+	for i := range s1 {
 		y[0] = i + 1
 
-		for j, _ := range s2 {
+		for j := range s2 {
 			var cost int
 			if s1[i] == s2[j] {
 				cost = 0

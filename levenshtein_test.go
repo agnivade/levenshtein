@@ -3,9 +3,9 @@ package levenshtein
 import "testing"
 
 type testtuple struct {
-	first             string
-	second            string
-	levenshtein_value int
+	first            string
+	second           string
+	levenshteinValue int
 }
 
 var tests = []testtuple{
@@ -20,8 +20,8 @@ func TestSanity(t *testing.T) {
 		if err != nil {
 			t.Errorf("Test[%d]: Error returned - %s. Value is - %d", i, err, n)
 		}
-		if n != test.levenshtein_value {
-			t.Errorf("Test[%d]: Expected %d, got %d", i, test.levenshtein_value, n)
+		if n != test.levenshteinValue {
+			t.Errorf("Test[%d]: Expected %d, got %d", i, test.levenshteinValue, n)
 		}
 	}
 }
@@ -41,8 +41,8 @@ func TestNormal(t *testing.T) {
 		if err != nil {
 			t.Errorf("Test[%d]: Error returned - %s. Value is - %d", i, err, n)
 		}
-		if n != test.levenshtein_value {
-			t.Errorf("Test[%d]: Expected %d, got %d", i, test.levenshtein_value, n)
+		if n != test.levenshteinValue {
+			t.Errorf("Test[%d]: Expected %d, got %d", i, test.levenshteinValue, n)
 		}
 	}
 }
