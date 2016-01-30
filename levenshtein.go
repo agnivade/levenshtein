@@ -6,14 +6,24 @@ package levenshtein
 
 // ComputeDistance computes the levenshtein distance between the two
 // strings passed as an argument. The return value is the levenshtein distance
-// and error if any.
+// and error (currently always nil) if any.
 //
-// Note this works on bytes instead of runes so it will produce incorrect
-// results for Unicode code points >= utf8.RuneSelf (128).
-func ComputeDistance(s1, s2 string) (n int, err error) {
-	if s1 == s2 {
+// Works on runes (Unicode code points) but does not normalize
+// the input strings. See https://blog.golang.org/normalization
+// and the golang.org/x/text/unicode/norm pacage.
+func ComputeDistance(a, b string) (int, error) {
+	if a == b {
 		return 0, nil
 	}
+
+	// Converting to []rune is simple but requires extra
+	// storage and time which may be an issue for long strings.
+	// This could be avoided by using utf8.RuneCountInString
+	// (one pass through the string) and then careful use of
+	// Go's string ranging (i.e. ignoring the byte offset
+	// index returned and using our own rune index counter).
+	s1 := []rune(a)
+	s2 := []rune(b)
 	if len(s1) == 0 {
 		return len(s2), nil
 	}

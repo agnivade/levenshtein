@@ -16,6 +16,9 @@ func TestSanity(t *testing.T) {
 		{"kitten", "sitting", 3},
 		{"distance", "difference", 5},
 		{"levenshtein", "frankenstein", 6},
+		{"resume and cafe", "resumes and cafes", 2},
+		{"resumé and café", "resumés and cafés", 2},
+		{"resume and cafe", "resumé and café", 2},
 	}
 	for i, d := range tests {
 		n, err := ComputeDistance(d.a, d.b)
