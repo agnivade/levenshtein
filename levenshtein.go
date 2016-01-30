@@ -4,15 +4,13 @@
 // http://en.wikipedia.org/wiki/Levenshtein_distance#Iterative_with_two_matrix_rows
 package levenshtein
 
-import (
-	"math"
-)
-
 // ComputeDistance computes the levenshtein distance between the two
 // strings passed as an argument. The return value is the levenshtein distance
-// and error if any
+// and error if any.
+//
+// Note this works on bytes instead of runes so it will produce incorrect
+// results for Unicode code points >= utf8.RuneSelf (128).
 func ComputeDistance(s1, s2 string) (n int, err error) {
-
 	if s1 == s2 {
 		return 0, nil
 	}
@@ -38,10 +36,16 @@ func ComputeDistance(s1, s2 string) (n int, err error) {
 			} else {
 				cost = 1
 			}
-			y[j+1] = int(math.Min(float64(y[j]+1),
-				math.Min(float64(x[j+1]+1), float64(x[j]+cost))))
+			y[j+1] = min(y[j]+1, min(x[j+1]+1, x[j]+cost))
 		}
 		copy(x, y)
 	}
 	return y[len(s2)], nil
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
