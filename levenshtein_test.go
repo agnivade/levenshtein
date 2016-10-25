@@ -21,11 +21,7 @@ func TestSanity(t *testing.T) {
 		{"resume and cafe", "resumé and café", 2},
 	}
 	for i, d := range tests {
-		n, err := ComputeDistance(d.a, d.b)
-		if err != nil {
-			t.Errorf("Test[%d]: ComputeDistance(%q,%q), error: %v", i, d.a, d.b, err)
-			continue
-		}
+		n := ComputeDistance(d.a, d.b)
 		if n != d.want {
 			t.Errorf("Test[%d]: ComputeDistance(%q,%q) returned %v, want %v",
 				i, d.a, d.b, n, d.want)

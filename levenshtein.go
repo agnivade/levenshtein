@@ -11,9 +11,9 @@ package levenshtein
 // Works on runes (Unicode code points) but does not normalize
 // the input strings. See https://blog.golang.org/normalization
 // and the golang.org/x/text/unicode/norm pacage.
-func ComputeDistance(a, b string) (int, error) {
+func ComputeDistance(a, b string) int {
 	if a == b {
-		return 0, nil
+		return 0
 	}
 
 	// Converting to []rune is simple but requires extra
@@ -25,10 +25,10 @@ func ComputeDistance(a, b string) (int, error) {
 	s1 := []rune(a)
 	s2 := []rune(b)
 	if len(s1) == 0 {
-		return len(s2), nil
+		return len(s2)
 	}
 	if len(s2) == 0 {
-		return len(s1), nil
+		return len(s1)
 	}
 
 	x := make([]int, len(s2)+1)
@@ -50,7 +50,7 @@ func ComputeDistance(a, b string) (int, error) {
 		}
 		copy(x, y)
 	}
-	return y[len(s2)], nil
+	return y[len(s2)]
 }
 
 func min(a, b int) int {
