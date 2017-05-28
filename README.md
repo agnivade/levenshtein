@@ -36,7 +36,7 @@ Benchmarks
 Words selected are - "levenshtein" and "frankenstein".
 ```
 go test -run=XXX -bench=. -benchmem
-BenchmarkSimple-4   	 2000000	       690 ns/op	     224 B/op	       2 allocs/op
+BenchmarkSimple-4   	 3000000	       487 ns/op	      96 B/op	       1 allocs/op
 PASS
 ok  	github.com/agnivade/levenshtein	2.182s
 ```
