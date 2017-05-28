@@ -46,16 +46,23 @@ func ComputeDistance(a, b string) int {
 			} else {
 				cost = 1
 			}
-			y[j+1] = min(y[j]+1, min(x[j+1]+1, x[j]+cost))
+			y[j+1] = min(y[j]+1, x[j+1]+1, x[j]+cost)
 		}
 		copy(x, y)
 	}
 	return y[len(s2)]
 }
 
-func min(a, b int) int {
-	if a < b {
-		return a
+// min is a slightly optimised version which calculates minimum of 3 integers.
+// The normal version uses much more if-else conditions
+func min(a, b, c int) int {
+	m := a
+
+	if m > b {
+		m = b
 	}
-	return b
+	if m > c {
+		return c
+	}
+	return m
 }
