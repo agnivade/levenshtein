@@ -24,22 +24,27 @@ func ComputeDistance(a, b string) int {
 	// index returned and using our own rune index counter).
 	s1 := []rune(a)
 	s2 := []rune(b)
-	if len(s1) == 0 {
-		return len(s2)
+
+	lenS1 := len(s1)
+	lenS2 := len(s2)
+
+	if lenS1 == 0 {
+		return lenS2
 	}
-	if len(s2) == 0 {
-		return len(s1)
+	if lenS2 == 0 {
+		return lenS1
 	}
 
-	x := make([]int, len(s2)+1)
-	y := make([]int, len(s2)+1)
-	for i := range x {
+	x := make([]int, lenS2+1)
+	y := make([]int, lenS2+1)
+	for i := 0; i < lenS2+1; i++ {
 		x[i] = i
 	}
-	for i := range s1 {
+	for i := 0; i < lenS1; i++ {
 		y[0] = i + 1
 
-		for j := range s2 {
+		for j := 0; j < lenS2; j++ {
+
 			var cost int
 			if s1[i] == s2[j] {
 				cost = 0
@@ -50,19 +55,18 @@ func ComputeDistance(a, b string) int {
 		}
 		copy(x, y)
 	}
-	return y[len(s2)]
+	return y[lenS2]
 }
 
-// min is a slightly optimised version which calculates minimum of 3 integers.
-// The normal version uses much more if-else conditions
 func min(a, b, c int) int {
-	m := a
-
-	if m > b {
-		m = b
+	if a < b {
+		if a < c {
+			return a
+		}
+	} else {
+		if b < c {
+			return b
+		}
 	}
-	if m > c {
-		return c
-	}
-	return m
+	return c
 }
