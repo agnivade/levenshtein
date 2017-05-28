@@ -3,6 +3,9 @@ levenshtein [![Build Status](https://travis-ci.org/agnivade/levenshtein.svg?bran
 
 [Go](http://golang.org) package to calculate the [Levenshtein Distance](http://en.wikipedia.org/wiki/Levenshtein_distance)
 
+The library is fully capable of working with non-ascii strings. But the strings are not normalized. That is left as a user-dependant use case. Please normalize the strings before passing it to the library if you have such a requirement.
+- https://blog.golang.org/normalization
+
 Install
 -------
 
