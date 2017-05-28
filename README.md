@@ -30,3 +30,14 @@ func main() {
 
 ```
 
+Benchmarks
+----------
+
+Words selected are - "levenshtein" and "frankenstein".
+The 2 allocations are required to convert the strings to runes to work with unicodes
+```
+go test -run=XXX -bench=. -benchmem
+BenchmarkSimple-4   	 2000000	       753 ns/op	     224 B/op	       2 allocs/op
+PASS
+ok  	github.com/agnivade/levenshtein	2.393s
+```
