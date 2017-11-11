@@ -15,12 +15,12 @@ func ComputeDistance(a, b string) int {
 		return 0
 	}
 
-	// Converting to []rune is simple but requires extra
-	// storage and time which may be an issue for long strings.
+	// We need to convert to []rune if the strings are non-ascii.
 	// This could be avoided by using utf8.RuneCountInString
-	// (one pass through the string) and then careful use of
-	// Go's string ranging (i.e. ignoring the byte offset
-	// index returned and using our own rune index counter).
+	// and then doing some juggling with rune indices.
+	// The primary challenge is keeping track of the previous rune.
+	// With a range loop, its not that easy. And with a for-loop
+	// we need to keep track of the inter-rune width using utf8.DecodeRuneInString
 	s1 := []rune(a)
 	s2 := []rune(b)
 

@@ -36,10 +36,22 @@ func main() {
 Benchmarks
 ----------
 
-Words selected are - "levenshtein" and "frankenstein".
 ```
-go test -run=XXX -bench=. -benchmem
-BenchmarkSimple-4   	 3000000	       487 ns/op	      96 B/op	       1 allocs/op
-PASS
-ok  	github.com/agnivade/levenshtein	2.182s
+name              time/op
+Simple/ASCII-4     537ns ± 2%
+Simple/French-4    956ns ± 0%
+Simple/Nordic-4   1.95µs ± 1%
+Simple/Tibetan-4  1.53µs ± 2%
+
+name              alloc/op
+Simple/ASCII-4     96.0B ± 0%
+Simple/French-4     128B ± 0%
+Simple/Nordic-4     192B ± 0%
+Simple/Tibetan-4    144B ± 0%
+
+name              allocs/op
+Simple/ASCII-4      1.00 ± 0%
+Simple/French-4     1.00 ± 0%
+Simple/Nordic-4     1.00 ± 0%
+Simple/Tibetan-4    1.00 ± 0%
 ```

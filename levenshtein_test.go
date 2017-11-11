@@ -1,6 +1,8 @@
 package levenshtein
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestSanity(t *testing.T) {
 	tests := []struct {
@@ -51,9 +53,23 @@ func TestUnicode(t *testing.T) {
 // Benchmarks
 // ----------------------------------------------
 func BenchmarkSimple(b *testing.B) {
-	leven := "levenshtein"
-	franken := "frankenstein"
-	for n := 0; n < b.N; n++ {
-		ComputeDistance(leven, franken)
+	tests := []struct {
+		a, b string
+		name string
+	}{
+		// ASCII
+		{"levenshtein", "frankenstein", "ASCII"},
+		// Testing acutes and umlauts
+		{"resumé and café", "resumés and cafés", "French"},
+		{"Hafþór Júlíus Björnsson", "Hafþor Julius Bjornsson", "Nordic"},
+		// Only 2 characters are less in the 2nd string
+		{"།་གམ་འས་པ་་མ།", "།་གམའས་པ་་མ", "Tibetan"},
+	}
+	for _, test := range tests {
+		b.Run(test.name, func(b *testing.B) {
+			for n := 0; n < b.N; n++ {
+				ComputeDistance(test.a, test.b)
+			}
+		})
 	}
 }
