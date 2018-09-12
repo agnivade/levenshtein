@@ -4,6 +4,8 @@
 // https://gist.github.com/andrei-m/982927#gistcomment-1931258
 package levenshtein
 
+import "unicode/utf8"
+
 // ComputeDistance computes the levenshtein distance between the two
 // strings passed as an argument. The return value is the levenshtein distance
 //
@@ -11,6 +13,14 @@ package levenshtein
 // the input strings. See https://blog.golang.org/normalization
 // and the golang.org/x/text/unicode/norm pacage.
 func ComputeDistance(a, b string) int {
+	if len(a) == 0 {
+		return utf8.RuneCountInString(b)
+	}
+
+	if len(b) == 0 {
+		return utf8.RuneCountInString(a)
+	}
+
 	if a == b {
 		return 0
 	}
