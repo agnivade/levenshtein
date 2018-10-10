@@ -38,10 +38,10 @@ Benchmarks
 
 ```
 name              time/op
-Simple/ASCII-4     537ns ± 2%
-Simple/French-4    956ns ± 0%
-Simple/Nordic-4   1.95µs ± 1%
-Simple/Tibetan-4  1.53µs ± 2%
+Simple/ASCII-4     432ns ± 0%
+Simple/French-4    821ns ± 0%
+Simple/Nordic-4   1.65µs ± 1%
+Simple/Tibetan-4  1.29µs ± 1%
 
 name              alloc/op
 Simple/ASCII-4     96.0B ± 0%
