@@ -4,7 +4,7 @@ install:
 	go install
 
 lint:
-	gofmt -l -s -w . && go tool vet -all . && golint
+	gofmt -l -s -w . && go vet . && golint -set_exit_status=1 .
 
 test:
 	go test -race -v -coverprofile=coverage.txt -covermode=atomic
