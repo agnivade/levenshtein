@@ -52,6 +52,8 @@ func TestUnicode(t *testing.T) {
 
 // Benchmarks
 // ----------------------------------------------
+var sink int
+
 func BenchmarkSimple(b *testing.B) {
 	tests := []struct {
 		a, b string
@@ -65,11 +67,13 @@ func BenchmarkSimple(b *testing.B) {
 		// Only 2 characters are less in the 2nd string
 		{"།་གམ་འས་པ་་མ།", "།་གམའས་པ་་མ", "Tibetan"},
 	}
+	tmp := 0
 	for _, test := range tests {
 		b.Run(test.name, func(b *testing.B) {
 			for n := 0; n < b.N; n++ {
-				ComputeDistance(test.a, test.b)
+				tmp = ComputeDistance(test.a, test.b)
 			}
 		})
 	}
+	sink = tmp
 }
