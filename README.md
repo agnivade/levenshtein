@@ -55,3 +55,22 @@ Simple/French-4     1.00 ± 0%
 Simple/Nordic-4     1.00 ± 0%
 Simple/Tibetan-4    1.00 ± 0%
 ```
+
+Comparisons with other libraries
+--------------------------------
+
+```
+name                     time/op
+Leven/ASCII/agniva-4      353ns ± 1%
+Leven/ASCII/arbovm-4      485ns ± 1%
+Leven/ASCII/dgryski-4     395ns ± 0%
+Leven/French/agniva-4     648ns ± 1%
+Leven/French/arbovm-4     791ns ± 0%
+Leven/French/dgryski-4    682ns ± 0%
+Leven/Nordic/agniva-4    1.28µs ± 1%
+Leven/Nordic/arbovm-4    1.52µs ± 1%
+Leven/Nordic/dgryski-4   1.32µs ± 1%
+Leven/Tibetan/agniva-4   1.12µs ± 1%
+Leven/Tibetan/arbovm-4   1.31µs ± 0%
+Leven/Tibetan/dgryski-4  1.16µs ± 0%
+```
