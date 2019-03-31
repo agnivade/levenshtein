@@ -1,7 +1,11 @@
-package levenshtein
+package levenshtein_test
 
 import (
 	"testing"
+
+	agnivade "github.com/agnivade/levenshtein"
+	arbovm "github.com/arbovm/levenshtein"
+	dgryski "github.com/dgryski/trifles/leven"
 )
 
 func TestSanity(t *testing.T) {
@@ -21,7 +25,7 @@ func TestSanity(t *testing.T) {
 		{"resume and cafe", "resumes and cafes", 2},
 	}
 	for i, d := range tests {
-		n := ComputeDistance(d.a, d.b)
+		n := agnivade.ComputeDistance(d.a, d.b)
 		if n != d.want {
 			t.Errorf("Test[%d]: ComputeDistance(%q,%q) returned %v, want %v",
 				i, d.a, d.b, n, d.want)
@@ -42,7 +46,7 @@ func TestUnicode(t *testing.T) {
 		{"།་གམ་འས་པ་་མ།", "།་གམའས་པ་་མ", 2},
 	}
 	for i, d := range tests {
-		n := ComputeDistance(d.a, d.b)
+		n := agnivade.ComputeDistance(d.a, d.b)
 		if n != d.want {
 			t.Errorf("Test[%d]: ComputeDistance(%q,%q) returned %v, want %v",
 				i, d.a, d.b, n, d.want)
@@ -71,8 +75,44 @@ func BenchmarkSimple(b *testing.B) {
 	for _, test := range tests {
 		b.Run(test.name, func(b *testing.B) {
 			for n := 0; n < b.N; n++ {
-				tmp = ComputeDistance(test.a, test.b)
+				tmp = agnivade.ComputeDistance(test.a, test.b)
 			}
+		})
+	}
+	sink = tmp
+}
+
+func BenchmarkAll(b *testing.B) {
+	tests := []struct {
+		a, b string
+		name string
+	}{
+		// ASCII
+		{"levenshtein", "frankenstein", "ASCII"},
+		// Testing acutes and umlauts
+		{"resumé and café", "resumés and cafés", "French"},
+		{"Hafþór Júlíus Björnsson", "Hafþor Julius Bjornsson", "Nordic"},
+		// Only 2 characters are less in the 2nd string
+		{"།་གམ་འས་པ་་མ།", "།་གམའས་པ་་མ", "Tibetan"},
+	}
+	tmp := 0
+	for _, test := range tests {
+		b.Run(test.name, func(b *testing.B) {
+			b.Run("agniva", func(b *testing.B) {
+				for n := 0; n < b.N; n++ {
+					tmp = agnivade.ComputeDistance(test.a, test.b)
+				}
+			})
+			b.Run("arbovm", func(b *testing.B) {
+				for n := 0; n < b.N; n++ {
+					tmp = arbovm.Distance(test.a, test.b)
+				}
+			})
+			b.Run("dgryski", func(b *testing.B) {
+				for n := 0; n < b.N; n++ {
+					tmp = dgryski.Levenshtein([]rune(test.a), []rune(test.b))
+				}
+			})
 		})
 	}
 	sink = tmp
