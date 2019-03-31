@@ -54,9 +54,7 @@ func ComputeDistance(a, b string) int {
 	for i := 1; i <= lenS2; i++ {
 		prev := i
 		var current int
-
 		for j := 1; j <= lenS1; j++ {
-
 			if s2[i-1] == s1[j-1] {
 				current = x[j-1] // match
 			} else {
