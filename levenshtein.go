@@ -43,7 +43,8 @@ func ComputeDistance(a, b string) int {
 
 	// init the row
 	x := make([]int, lenS1+1)
-	for i := 0; i < len(x); i++ {
+	// we start from 1 because index 0 is already 0.
+	for i := 1; i < len(x); i++ {
 		x[i] = i
 	}
 
