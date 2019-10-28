@@ -25,12 +25,10 @@ func ComputeDistance(a, b string) int {
 		return 0
 	}
 
-	// We need to convert to []rune if the strings are non-ascii.
+	// We need to convert to []rune if the strings are non-ASCII.
 	// This could be avoided by using utf8.RuneCountInString
-	// and then doing some juggling with rune indices.
-	// The primary challenge is keeping track of the previous rune.
-	// With a range loop, its not that easy. And with a for-loop
-	// we need to keep track of the inter-rune width using utf8.DecodeRuneInString
+	// and then doing some juggling with rune indices,
+	// but leads to far more bounds checks. It is a reasonable trade-off.
 	s1 := []rune(a)
 	s2 := []rune(b)
 
