@@ -40,10 +40,10 @@ func ComputeDistance(a, b string) int {
 	lenS2 := len(s2)
 
 	// init the row
-	x := make([]int, lenS1+1)
+	x := make([]uint16, lenS1+1)
 	// we start from 1 because index 0 is already 0.
 	for i := 1; i < len(x); i++ {
-		x[i] = i
+		x[i] = uint16(i)
 	}
 
 	// make a dummy bounds check to prevent the 2 bounds check down below.
@@ -51,8 +51,8 @@ func ComputeDistance(a, b string) int {
 	_ = x[lenS1]
 	// fill in the rest
 	for i := 1; i <= lenS2; i++ {
-		prev := i
-		var current int
+		prev := uint16(i)
+		var current uint16
 		for j := 1; j <= lenS1; j++ {
 			if s2[i-1] == s1[j-1] {
 				current = x[j-1] // match
@@ -64,10 +64,10 @@ func ComputeDistance(a, b string) int {
 		}
 		x[lenS1] = prev
 	}
-	return x[lenS1]
+	return int(x[lenS1])
 }
 
-func min(a, b int) int {
+func min(a, b uint16) uint16 {
 	if a < b {
 		return a
 	}
