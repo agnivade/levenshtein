@@ -41,10 +41,6 @@ func ComputeDistance(a, b string) int {
 
 	// init the row
 	x := make([]uint16, lenS1+1)
-	// we start from 1 because index 0 is already 0.
-	for i := 1; i < len(x); i++ {
-		x[i] = uint16(i)
-	}
 
 	// make a dummy bounds check to prevent the 2 bounds check down below.
 	// The one inside the loop is particularly costly.
