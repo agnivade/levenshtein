@@ -52,9 +52,8 @@ func ComputeDistance(a, b string) int {
 	// fill in the rest
 	for i := 1; i <= lenS2; i++ {
 		prev := uint16(i)
-		var current uint16
 		for j := 1; j <= lenS1; j++ {
-			current = x[j-1] // match
+			current := x[j-1] // match
 			if s2[i-1] != s1[j-1] {
 				current = min(min(x[j-1]+1, prev+1), x[j]+1)
 			}
