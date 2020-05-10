@@ -37,6 +37,7 @@ func ComputeDistance(a, b string) int {
 		s1, s2 = s2, s1
 	}
 	lenS1 := len(s1)
+	lenS2 := len(s2)
 
 	// init the row
 	x := make([]uint16, lenS1+1)
@@ -45,14 +46,14 @@ func ComputeDistance(a, b string) int {
 	// The one inside the loop is particularly costly.
 	_ = x[lenS1]
 	// fill in the rest
-	for i, r2 := range s2 {
-		prev := uint16(i) + 1
-		for j, r1 := range s1 {
-			current := x[j] // match
-			if r1 != r2 {
-				current = min(min(x[j]+1, prev+1), x[j+1]+1)
+	for i := 1; i <= lenS2; i++ {
+		prev := uint16(i)
+		for j := 1; j <= lenS1; j++ {
+			current := x[j-1] // match
+			if s2[i-1] != s1[j-1] {
+				current = min(min(x[j-1]+1, prev+1), x[j]+1)
 			}
-			x[j] = prev
+			x[j-1] = prev
 			prev = current
 		}
 		x[lenS1] = prev
