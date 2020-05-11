@@ -1,11 +1,14 @@
 package levenshtein_test
 
 import (
+	"fmt"
+	"strconv"
 	"testing"
 
 	agnivade "github.com/agnivade/levenshtein"
 	arbovm "github.com/arbovm/levenshtein"
 	dgryski "github.com/dgryski/trifles/leven"
+	psadac "github.com/psadac/levenshtein"
 )
 
 func TestSanity(t *testing.T) {
@@ -116,4 +119,36 @@ func BenchmarkAll(b *testing.B) {
 		})
 	}
 	sink = tmp
+}
+
+// GenStrings generate all possible strings with a given length composed of '0' and '1'.
+func GenStrings(length int) []string {
+	strs := make([]string, 0, 2<<length)
+
+	for s := 1; s <= length; s++ {
+		format := "%0" + strconv.Itoa(s) + "b"
+
+		for i := 0; i < 1<<s; i++ {
+			strs = append(strs, fmt.Sprintf(format, i))
+		}
+	}
+
+	return strs
+}
+
+// TestWithoutCacheInit does not work.
+func TestWithoutCacheInit(t *testing.T) {
+	length := 4
+	strs := GenStrings(length)
+
+	for i := 0; i < len(strs); i++ {
+		for j := 0; j < len(strs); j++ {
+			vRef := agnivade.ComputeDistance(strs[i], strs[j])
+			vTst := psadac.ComputeDistance(strs[i], strs[j])
+			if vRef != vTst {
+				t.Errorf("levenshtein(\"%s\",\"%s\") : want result to be %d, got %d",
+					strs[i], strs[j], vRef, vTst)
+			}
+		}
+	}
 }
