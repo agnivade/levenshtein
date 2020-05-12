@@ -20,6 +20,7 @@ func TestSanity(t *testing.T) {
 		{"hello", "", 5},
 		{"hello", "hello", 0},
 		{"ab", "aa", 1},
+		{"ab", "ba", 2},
 		{"ab", "aaa", 2},
 		{"bbb", "a", 3},
 		{"kitten", "sitting", 3},
