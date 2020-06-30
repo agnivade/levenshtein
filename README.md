@@ -8,7 +8,7 @@ The library is fully capable of working with non-ascii strings. But the strings 
 
 #### Limitation
 
-As a performance optimization, the library can handle strings only up to 65536 characters (runes). This is only available on tip, and is not part of a tagged release yet. If you require such an optimization, please use the version at tip.
+As a performance optimization, the library can handle strings only up to 65536 characters (runes). If you need to handle strings larger than that, please pin to version 1.0.3.
 
 Install
 -------
