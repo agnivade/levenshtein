@@ -11,7 +11,7 @@ import "unicode/utf8"
 //
 // Works on runes (Unicode code points) but does not normalize
 // the input strings. See https://blog.golang.org/normalization
-// and the golang.org/x/text/unicode/norm pacage.
+// and the golang.org/x/text/unicode/norm package.
 func ComputeDistance(a, b string) int {
 	if len(a) == 0 {
 		return utf8.RuneCountInString(b)
