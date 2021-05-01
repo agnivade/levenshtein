@@ -24,6 +24,7 @@ func TestSanity(t *testing.T) {
 		{"distance", "difference", 5},
 		{"levenshtein", "frankenstein", 6},
 		{"resume and cafe", "resumes and cafes", 2},
+		{"a very long string that is meant to exceed", "another very long string that is meant to exceed", 6},
 	}
 	for i, d := range tests {
 		n := agnivade.ComputeDistance(d.a, d.b)
@@ -69,6 +70,7 @@ func BenchmarkSimple(b *testing.B) {
 		// Testing acutes and umlauts
 		{"resumé and café", "resumés and cafés", "French"},
 		{"Hafþór Júlíus Björnsson", "Hafþor Julius Bjornsson", "Nordic"},
+		{"a very long string that is meant to exceed", "another very long string that is meant to exceed", "long string"},
 		// Only 2 characters are less in the 2nd string
 		{"།་གམ་འས་པ་་མ།", "།་གམའས་པ་་མ", "Tibetan"},
 	}
