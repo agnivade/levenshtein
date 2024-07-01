@@ -142,3 +142,45 @@ func BenchmarkAll(b *testing.B) {
 	}
 	sink = tmp
 }
+
+// Fuzzing
+// ----------------------------------------------
+
+func FuzzComputeDistanceDifferent(f *testing.F) {
+	testcases := []struct{ a, b string }{
+		{"levenshtein", "frankenstein"},
+		{"resumé and café", "resumés and cafés"},
+		{"Hafþór Júlíus Björnsson", "Hafþor Julius Bjornsson"},
+		{"།་གམ་འས་པ་་མ།", "།་གམའས་པ་་མ"},
+	}
+	for _, tc := range testcases {
+		f.Add(tc.a, tc.b)
+	}
+	f.Fuzz(func(t *testing.T, a, b string) {
+		n := agnivade.ComputeDistance(a, b)
+		if n < 0 {
+			t.Errorf("Distance can not be negative: %d, a: %q, b: %q", n, a, b)
+		}
+		if n > len(a)+len(b) {
+			t.Errorf("Distance can not be greater than sum of lengths of a and b: %d, a: %q, b: %q", n, a, b)
+		}
+	})
+}
+
+func FuzzComputeDistanceEqual(f *testing.F) {
+	testcases := []string{
+		"levenshtein", "frankenstein",
+		"resumé and café", "resumés and cafés",
+		"Hafþór Júlíus Björnsson", "Hafþor Julius Bjornsson",
+		"།་གམ་འས་པ་་མ།", "།་གམའས་པ་་མ",
+	}
+	for _, tc := range testcases {
+		f.Add(tc)
+	}
+	f.Fuzz(func(t *testing.T, a string) {
+		n := agnivade.ComputeDistance(a, a)
+		if n != 0 {
+			t.Errorf("Distance must be zero: %d, a: %q", n, a)
+		}
+	})
+}
