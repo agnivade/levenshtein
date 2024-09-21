@@ -71,7 +71,7 @@ func ComputeDistance(a, b string) int {
 		for j := 1; j <= lenS1; j++ {
 			current := x[j-1] // match
 			if s2[i-1] != s1[j-1] {
-				current = min(min(x[j-1]+1, prev+1), x[j]+1)
+				current = min(x[j-1]+1, prev+1, x[j]+1)
 			}
 			x[j-1] = prev
 			prev = current
@@ -79,11 +79,4 @@ func ComputeDistance(a, b string) int {
 		x[lenS1] = prev
 	}
 	return int(x[lenS1])
-}
-
-func min(a, b uint16) uint16 {
-	if a < b {
-		return a
-	}
-	return b
 }
