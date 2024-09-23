@@ -66,13 +66,35 @@ func BenchmarkSimple(b *testing.B) {
 		name string
 	}{
 		// ASCII
-		{"levenshtein", "frankenstein", "ASCII"},
+		{a: "levenshtein", b: "frankenstein", name: "ASCII"},
 		// Testing acutes and umlauts
-		{"resumé and café", "resumés and cafés", "French"},
-		{"Hafþór Júlíus Björnsson", "Hafþor Julius Bjornsson", "Nordic"},
-		{"a very long string that is meant to exceed", "another very long string that is meant to exceed", "long string"},
+		{a: "resumé and café", b: "resumés and cafés", name: "French"},
+		{a: "Hafþór Júlíus Björnsson", b: "Hafþor Julius Bjornsson", name: "Nordic"},
+
+		// Long strings
+		{
+			a:    "a very long string that is meant to exceed",
+			b:    "another very long string that is meant to exceed",
+			name: "Long lead",
+		},
+		{
+			a:    "a very long string with a word in the middle that is different",
+			b:    "a very long string with some text in the middle that is different",
+			name: "Long middle",
+		},
+		{
+			a:    "a very long string with some text at the end that is not the same",
+			b:    "a very long string with some text at the end that is very different",
+			name: "Long trail",
+		},
+		{
+			a:    "+a very long string with different leading and trailing characters+",
+			b:    "-a very long string with different leading and trailing characters-",
+			name: "Long diff",
+		},
+
 		// Only 2 characters are less in the 2nd string
-		{"།་གམ་འས་པ་་མ།", "།་གམའས་པ་་མ", "Tibetan"},
+		{a: "།་གམ་འས་པ་་མ།", b: "།་གམའས་པ་་མ", name: "Tibetan"},
 	}
 	tmp := 0
 	for _, test := range tests {
