@@ -13,18 +13,22 @@ func TestSanity(t *testing.T) {
 		a, b string
 		want int
 	}{
-		{"", "hello", 5},
-		{"hello", "", 5},
-		{"hello", "hello", 0},
-		{"ab", "aa", 1},
-		{"ab", "ba", 2},
-		{"ab", "aaa", 2},
-		{"bbb", "a", 3},
-		{"kitten", "sitting", 3},
-		{"distance", "difference", 5},
-		{"levenshtein", "frankenstein", 6},
-		{"resume and cafe", "resumes and cafes", 2},
-		{"a very long string that is meant to exceed", "another very long string that is meant to exceed", 6},
+		{a: "", b: "hello", want: 5},
+		{a: "hello", b: "", want: 5},
+		{a: "hello", b: "hello"},
+		{a: "ab", b: "aa", want: 1},
+		{a: "ab", b: "ba", want: 2},
+		{a: "ab", b: "aaa", want: 2},
+		{a: "bbb", b: "a", want: 3},
+		{a: "kitten", b: "sitting", want: 3},
+		{a: "distance", b: "difference", want: 5},
+		{a: "levenshtein", b: "frankenstein", want: 6},
+		{a: "resume and cafe", b: "resumes and cafes", want: 2},
+		{
+			a:    "a very long string that is meant to exceed",
+			b:    "another very long string that is meant to exceed",
+			want: 6,
+		},
 	}
 	for i, d := range tests {
 		n := agnivade.ComputeDistance(d.a, d.b)
@@ -41,11 +45,11 @@ func TestUnicode(t *testing.T) {
 		want int
 	}{
 		// Testing acutes and umlauts
-		{"resumé and café", "resumés and cafés", 2},
-		{"resume and cafe", "resumé and café", 2},
-		{"Hafþór Júlíus Björnsson", "Hafþor Julius Bjornsson", 4},
+		{a: "resumé and café", b: "resumés and cafés", want: 2},
+		{a: "resume and cafe", b: "resumé and café", want: 2},
+		{a: "Hafþór Júlíus Björnsson", b: "Hafþor Julius Bjornsson", want: 4},
 		// Only 2 characters are less in the 2nd string
-		{"།་གམ་འས་པ་་མ།", "།་གམའས་པ་་མ", 2},
+		{a: "།་གམ་འས་པ་་མ།", b: "།་གམའས་པ་་མ", want: 2},
 	}
 	for i, d := range tests {
 		n := agnivade.ComputeDistance(d.a, d.b)
@@ -113,12 +117,12 @@ func BenchmarkAll(b *testing.B) {
 		name string
 	}{
 		// ASCII
-		{"levenshtein", "frankenstein", "ASCII"},
+		{a: "levenshtein", b: "frankenstein", name: "ASCII"},
 		// Testing acutes and umlauts
-		{"resumé and café", "resumés and cafés", "French"},
-		{"Hafþór Júlíus Björnsson", "Hafþor Julius Bjornsson", "Nordic"},
+		{a: "resumé and café", b: "resumés and cafés", name: "French"},
+		{a: "Hafþór Júlíus Björnsson", b: "Hafþor Julius Bjornsson", name: "Nordic"},
 		// Only 2 characters are less in the 2nd string
-		{"།་གམ་འས་པ་་མ།", "།་གམའས་པ་་མ", "Tibetan"},
+		{a: "།་གམ་འས་པ་་མ།", b: "།་གམའས་པ་་མ", name: "Tibetan"},
 	}
 	tmp := 0
 	for _, test := range tests {
