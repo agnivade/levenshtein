@@ -1,12 +1,16 @@
 package levenshtein_test
 
 import (
+	"math/rand"
 	"testing"
 
 	agnivade "github.com/agnivade/levenshtein"
 	arbovm "github.com/arbovm/levenshtein"
 	dgryski "github.com/dgryski/trifles/leven"
 )
+
+// rndSeed is the random seed used for random tests, benchmarks or fuzzing.
+const rndSeed = 42
 
 func TestSanity(t *testing.T) {
 	tests := []struct {
@@ -56,6 +60,33 @@ func TestUnicode(t *testing.T) {
 		if n != d.want {
 			t.Errorf("Test[%d]: ComputeDistance(%q,%q) returned %v, want %v",
 				i, d.a, d.b, n, d.want)
+		}
+	}
+}
+
+// TestRndInputs tests random inputs, of random lengths, with random changes
+// return values are compared to arbovm and dgryski Levenshtein implementations.
+func TestRndInputs(t *testing.T) {
+	const (
+		nbTests    = 1000 // number of tests.
+		maxLen     = 100  // maximum length in runes of rune array ra.
+		maxChanges = 20   // maximum number of changes from rune array ra to rune array rb.
+	)
+
+	rnd := rand.New(rand.NewSource(rndSeed))
+
+	for i := 0; i < nbTests; i++ {
+		ra := RandRunes(rnd, maxLen)
+		rb := RandRunesChange(rnd, ra, maxChanges)
+		a := string(ra)
+		b := string(rb)
+
+		da := agnivade.ComputeDistance(a, b)
+		dar := arbovm.Distance(a, b)
+		ddg := dgryski.Levenshtein(ra, rb)
+
+		if da != dar || da != ddg {
+			t.Errorf("ComputeDistance(%s,%s) returned %d, want %d (arbovm) or %d (dgryski)", a, b, da, dar, ddg)
 		}
 	}
 }
@@ -145,4 +176,57 @@ func BenchmarkAll(b *testing.B) {
 		})
 	}
 	sink = tmp
+}
+
+// Random runes generation functions
+// ----------------------------------
+
+// RandRunes generates a random array of runes of maxLen length.
+func RandRunes(rnd *rand.Rand, maxLen int) []rune {
+	nbRunes := rnd.Intn(maxLen)
+	runes := make([]rune, nbRunes)
+
+	for i := 0; i < nbRunes; i++ {
+		runes[i] = RandRune(rnd)
+	}
+	return runes
+}
+
+// RandRunesChange randomly makes maxChanges to rune array.
+// A change consists of random insert or update of a random rune.
+func RandRunesChange(rnd *rand.Rand, runes []rune, maxChanges int) []rune {
+	if len(runes) == 0 || maxChanges == 0 {
+		return runes
+	}
+
+	for i := 0; i < maxChanges; i++ {
+		pos := rnd.Intn(len(runes))
+		r := RandRune(rnd)
+
+		if rnd.Intn(2) == 0 {
+			// Insert
+			runes = append(runes[:pos], append([]rune{r}, runes[pos:]...)...)
+		} else {
+			// Update
+			runes[pos] = r
+		}
+	}
+	return runes
+}
+
+// RandRune generates a random rune from a random set of runes of different byte sizes.
+func RandRune(rnd *rand.Rand) rune {
+	var s, e int
+
+	switch rnd.Intn(4) {
+	case 0:
+		s, e = 0x0000, 0x007f // ASCII (1 byte)
+	case 1:
+		s, e = 0x0400, 0x04FF // Cyrillic (2 bytes)
+	case 2:
+		s, e = 0x0F00, 0x0FFF // Tibetan (3 bytes)
+	case 3:
+		s, e = 0x1F600, 0x1F64F // Emoticons (4 bytes)
+	}
+	return rune(s + rnd.Intn(e-s))
 }
