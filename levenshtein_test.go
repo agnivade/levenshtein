@@ -25,9 +25,9 @@ func TestSanity(t *testing.T) {
 		{a: "levenshtein", b: "frankenstein", want: 6},
 		{a: "resume and cafe", b: "resumes and cafes", want: 2},
 		{
-			a:    "a very long string that is meant to exceed",
-			b:    "another very long string that is meant to exceed",
-			want: 6,
+			a:    "a very long string that is meant to exceed size of the row",
+			b:    "another very long string that is meant to exceed size",
+			want: 17,
 		},
 	}
 	for i, d := range tests {
