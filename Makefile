@@ -17,3 +17,7 @@ cover: test
 	@if [ $$? -eq 0 ]; then \
 		go tool cover -html=coverage.out; \
 	fi
+
+# fuzz run all fuzzing functions
+fuzz:
+	go test -fuzz=.

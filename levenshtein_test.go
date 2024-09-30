@@ -3,13 +3,14 @@ package levenshtein_test
 import (
 	"math/rand"
 	"testing"
+	"time"
 
 	agnivade "github.com/agnivade/levenshtein"
 	arbovm "github.com/arbovm/levenshtein"
 	dgryski "github.com/dgryski/trifles/leven"
 )
 
-// rndSeed is the random seed used for random tests, benchmarks or fuzzing.
+// rndSeed is the random seed used for random tests and benchmarks.
 const rndSeed = 42
 
 func TestSanity(t *testing.T) {
@@ -176,6 +177,41 @@ func BenchmarkAll(b *testing.B) {
 		})
 	}
 	sink = tmp
+}
+
+// Fuzzing
+// ----------------------------------------------
+
+// FuzzComputeDistance is a fuzz test function that tests multiple implementations
+// of the Levenshtein distance (agnivade, arbovm, and dgryski). It generates
+// random rune sequences, applies a number of changes to one sequence, and then
+// tests whether the three implementations produce the same result. The test fails
+// if there is any discrepancy between the results of the different algorithms.
+func FuzzComputeDistance(f *testing.F) {
+	const (
+		nbSeeds    = 100 // number of seeds.
+		maxLen     = 100 // maximum length in runes of rune array ra.
+		maxChanges = 20  // maximum number of changes from rune array ra to rune array rb.
+	)
+
+	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	for i := 0; i < nbSeeds; i++ {
+		ra := RandRunes(rnd, maxLen)
+		rb := RandRunesChange(rnd, ra, maxChanges)
+
+		f.Add(string(ra), string(rb))
+	}
+
+	f.Fuzz(func(t *testing.T, a, b string) {
+		da := agnivade.ComputeDistance(a, b)
+		dar := arbovm.Distance(a, b)
+		ddg := dgryski.Levenshtein([]rune(a), []rune(b))
+
+		if da != dar || da != ddg {
+			t.Errorf("ComputeDistance(%s,%s) returned %d, want %d (arbovm) or %d (dgryski)", a, b, da, dar, ddg)
+		}
+	})
 }
 
 // Random runes generation functions
