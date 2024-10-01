@@ -18,6 +18,16 @@ cover: test
 		go tool cover -html=coverage.out; \
 	fi
 
-# fuzz run all fuzzing functions
+# fuzz runs all fuzzing functions
 fuzz:
 	go test -fuzz=.
+
+# perf compares performance using benchstat between the last commit and uncommitted code
+# to install benchstat run 'go install golang.org/x/perf/cmd/benchstat@latest'
+perf: COUNT=20
+perf:
+	go test -bench=BenchmarkSimple -benchmem ./... -count=${COUNT} | tee perf_after.out
+	git stash -q --keep-index
+	go test -bench=BenchmarkSimple -benchmem ./... -count=${COUNT} | tee perf_before.out
+	git stash pop -q
+	benchstat perf_before.out perf_after.out | tee perf_diff.out
