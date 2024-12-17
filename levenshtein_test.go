@@ -152,6 +152,9 @@ func FuzzComputeDistanceDifferent(f *testing.F) {
 		{"resumé and café", "resumés and cafés"},
 		{"Hafþór Júlíus Björnsson", "Hafþor Julius Bjornsson"},
 		{"།་གམ་འས་པ་་མ།", "།་གམའས་པ་་མ"},
+		{`_p~𕍞`, `b잖PwN`},
+		{`7ȪJR`, `6L)wӝ`},
+		{`_p~𕍞`, `Y>q8օ݌`},
 	}
 	for _, tc := range testcases {
 		f.Add(tc.a, tc.b)
