@@ -218,6 +218,7 @@ func BenchmarkRandom(b *testing.B) {
 // random rune sequences, applies a number of changes to one sequence, and then
 // tests whether the three implementations produce the same result. The test fails
 // if there is any discrepancy between the results of the different algorithms.
+// Additionally, it also tests if the levenshtein distance is at most the hamming distance.
 func FuzzComputeDistance(f *testing.F) {
 	const (
 		nbSeeds    = 100 // number of seeds.
@@ -242,7 +243,25 @@ func FuzzComputeDistance(f *testing.F) {
 		if da != dar || da != ddg {
 			t.Errorf("ComputeDistance(%s,%s) returned %d, want %d (arbovm) or %d (dgryski)", a, b, da, dar, ddg)
 		}
+
+		dh := hammingDistance([]rune(a), []rune(b))
+		if da > dh {
+			t.Errorf("ComputeDistance(%s,%s) returned %d, want at most %d (hamming distance)", a, b, da, dh)
+		}
 	})
+}
+
+func hammingDistance(a, b []rune) int {
+	if len(a) > len(b) {
+		a, b = b, a
+	}
+	d := len(b) - len(a)
+	for i, r := range a {
+		if r != b[i] {
+			d++
+		}
+	}
+	return d
 }
 
 // Random runes generation functions
