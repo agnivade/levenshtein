@@ -179,6 +179,37 @@ func BenchmarkAll(b *testing.B) {
 	sink = tmp
 }
 
+// BenchmarkRandom benchmarks random inputs, of random lengths.
+func BenchmarkRandom(b *testing.B) {
+	const (
+		nbParams   = 10000 // number of random parameters.
+		maxLen     = 100   // maximum length in runes of rune array ra.
+		maxChanges = 90    // maximum number of changes from rune array ra to rune array rb.
+	)
+
+	rnd := rand.New(rand.NewSource(rndSeed))
+
+	// create an array of random inputs.
+	type param struct{ a, b string }
+
+	params := make([]param, 0, nbParams)
+
+	for i := 0; i < nbParams; i++ {
+		ra := RandRunes(rnd, maxLen)
+		rb := RandRunesChange(rnd, ra, maxChanges)
+		p := param{a: string(ra), b: string(rb)}
+		params = append(params, p)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+		p := params[n%nbParams]
+		sink = agnivade.ComputeDistance(p.a, p.b)
+	}
+}
+
 // Fuzzing
 // ----------------------------------------------
 
