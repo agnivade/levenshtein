@@ -43,22 +43,10 @@ func ComputeDistance(a, b string) int {
 	}
 
 	// remove trailing identical runes.
-	for i := 0; i < len(s1); i++ {
-		if s1[len(s1)-1-i] != s2[len(s2)-1-i] {
-			s1 = s1[:len(s1)-i]
-			s2 = s2[:len(s2)-i]
-			break
-		}
-	}
+	s1, s2 = trimLongestCommonSuffix(s1, s2)
 
 	// Remove leading identical runes.
-	for i := 0; i < len(s1); i++ {
-		if s1[i] != s2[i] {
-			s1 = s1[i:]
-			s2 = s2[i:]
-			break
-		}
-	}
+	s1, s2 = trimLongestCommonPrefix(s1, s2)
 
 	lenS1 := len(s1)
 	lenS2 := len(s2)
@@ -98,4 +86,24 @@ func ComputeDistance(a, b string) int {
 		x[lenS1] = prev
 	}
 	return int(x[lenS1])
+}
+
+func trimLongestCommonSuffix(a, b []rune) ([]rune, []rune) {
+	m := min(len(a), len(b))
+	a2 := a[len(a)-m:]
+	b2 := b[len(b)-m:]
+	i := len(a2)
+	b2 = b2[:i] // hoist bounds checks out of the loop
+	for ; i > 0 && a2[i-1] == b2[i-1]; i-- {
+		// deliberately empty body
+	}
+	return a[:len(a)-len(a2)+i], b[:len(b)-len(b2)+i]
+}
+
+func trimLongestCommonPrefix(a, b []rune) ([]rune, []rune) {
+	var i int
+	for m := min(len(a), len(b)); i < m && a[i] == b[i]; i++ {
+		// deliberately empty body
+	}
+	return a[i:], b[i:]
 }
