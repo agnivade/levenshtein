@@ -79,7 +79,7 @@ func ComputeDistance(a, b string) int {
 		for j := 0; j < lenS1; j++ {
 			current := x[j] // match
 			if s2[i] != s1[j] {
-				current = min(x[j]+1, prev+1, y[j]+1)
+				current = min(x[j], prev, y[j]) + 1
 			}
 			x[j] = prev
 			prev = current
