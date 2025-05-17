@@ -69,18 +69,19 @@ func ComputeDistance(a, b string) int {
 		x[i] = uint16(i)
 	}
 
-	// make a dummy bounds check to prevent the 2 bounds check down below.
-	// The one inside the loop is particularly costly.
+	// hoist bounds checks out of the loops
 	_ = x[lenS1]
+	y := x[1:]
+	y = y[:lenS1]
 	// fill in the rest
-	for i := 1; i <= lenS2; i++ {
-		prev := uint16(i)
-		for j := 1; j <= lenS1; j++ {
-			current := x[j-1] // match
-			if s2[i-1] != s1[j-1] {
-				current = min(x[j-1]+1, prev+1, x[j]+1)
+	for i := 0; i < lenS2; i++ {
+		prev := uint16(i + 1)
+		for j := 0; j < lenS1; j++ {
+			current := x[j] // match
+			if s2[i] != s1[j] {
+				current = min(x[j]+1, prev+1, y[j]+1)
 			}
-			x[j-1] = prev
+			x[j] = prev
 			prev = current
 		}
 		x[lenS1] = prev
