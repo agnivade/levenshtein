@@ -122,18 +122,18 @@ func BenchmarkAll(b *testing.B) {
 	}
 	tmp := 0
 	for _, test := range tests {
-		b.Run(test.name, func(b *testing.B) {
-			b.Run("agniva", func(b *testing.B) {
+		b.Run("case="+test.name, func(b *testing.B) {
+			b.Run("impl=agniva", func(b *testing.B) {
 				for n := 0; n < b.N; n++ {
 					tmp = agnivade.ComputeDistance(test.a, test.b)
 				}
 			})
-			b.Run("arbovm", func(b *testing.B) {
+			b.Run("impl=arbovm", func(b *testing.B) {
 				for n := 0; n < b.N; n++ {
 					tmp = arbovm.Distance(test.a, test.b)
 				}
 			})
-			b.Run("dgryski", func(b *testing.B) {
+			b.Run("impl=dgryski", func(b *testing.B) {
 				for n := 0; n < b.N; n++ {
 					tmp = dgryski.Levenshtein([]rune(test.a), []rune(test.b))
 				}
