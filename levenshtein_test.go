@@ -8,50 +8,69 @@ import (
 	dgryski "github.com/dgryski/trifles/leven"
 )
 
-func TestSanity(t *testing.T) {
-	tests := []struct {
-		a, b string
-		want int
-	}{
-		{"", "hello", 5},
-		{"hello", "", 5},
-		{"hello", "hello", 0},
-		{"ab", "aa", 1},
-		{"ab", "ba", 2},
-		{"ab", "aaa", 2},
-		{"bbb", "a", 3},
-		{"kitten", "sitting", 3},
-		{"distance", "difference", 5},
-		{"levenshtein", "frankenstein", 6},
-		{"resume and cafe", "resumes and cafes", 2},
-		{"a very long string that is meant to exceed", "another very long string that is meant to exceed", 6},
-	}
-	for i, d := range tests {
-		n := agnivade.ComputeDistance(d.a, d.b)
-		if n != d.want {
-			t.Errorf("Test[%d]: ComputeDistance(%q,%q) returned %v, want %v",
-				i, d.a, d.b, n, d.want)
-		}
-	}
+type testCaseArray []struct {
+	group string // group of the test case.
+	a, b  string // inputs.
+	want  int    // expected result.
 }
 
-func TestUnicode(t *testing.T) {
-	tests := []struct {
-		a, b string
-		want int
-	}{
-		// Testing acutes and umlauts
-		{"resumé and café", "resumés and cafés", 2},
-		{"resume and cafe", "resumé and café", 2},
-		{"Hafþór Júlíus Björnsson", "Hafþor Julius Bjornsson", 4},
-		// Only 2 characters are less in the 2nd string
-		{"།་གམ་འས་པ་་མ།", "།་གམའས་པ་་མ", 2},
-	}
-	for i, d := range tests {
-		n := agnivade.ComputeDistance(d.a, d.b)
-		if n != d.want {
-			t.Errorf("Test[%d]: ComputeDistance(%q,%q) returned %v, want %v",
-				i, d.a, d.b, n, d.want)
+var testCases = testCaseArray{
+	{group: "Edge", a: "", b: "", want: 0},
+	{group: "Edge", a: "hello", b: "hello", want: 0},
+	{group: "Edge", a: "hello 😊", b: "hello 😊", want: 0},
+	{group: "Edge", a: "", b: "hello", want: 5},
+	{group: "Edge", a: "", b: "hello 😊", want: 7},
+	{group: "Edge", a: "hello", b: "hello world", want: 6},
+	{group: "Edge", a: "hello", b: "hello world 😊", want: 8},
+	{group: "Edge", a: "hello", b: "", want: 5},
+	{group: "Edge", a: "hello 😊", b: "", want: 7},
+	{group: "ASCII", a: "kitten", b: "sitting", want: 3},
+	{group: "ASCII", a: "distance", b: "difference", want: 5},
+	{group: "ASCII", a: "levenshtein", b: "frankenstein", want: 6},
+	{group: "French", a: "resume and cafe", b: "résumé and café", want: 3},
+	{group: "Nordic", a: "Hafþór Júlíus Björnsson", b: "Hafþor Julius Bjornsson", want: 4},
+	{group: "Tibetan", a: "།་གམ་འས་པ་་མ།", b: "།་གམའས་པ་་མ", want: 2},
+	{
+		group: "Long lead",
+		a:     "a very long string where the leading words are very different",
+		b:     "another very long string where the leading words are very different",
+		want:  6,
+	},
+	{
+		group: "Long middle",
+		a:     "a very long string with a word in the middle that is different",
+		b:     "a very long string with some text in the middle that is different",
+		want:  8,
+	},
+	{
+		group: "Long trail",
+		a:     "a very long string with some text at the end that is not the same",
+		b:     "a very long string with some text at the end that is very different",
+		want:  13,
+	},
+	{
+		group: "Long diff",
+		a:     "a very long string with different leading and trailing characters",
+		b:     "this is a very long string with different leading and trailing characters.",
+		want:  9,
+	},
+	{group: "Other", a: "some text", b: "😊😊😊some tex😊t😊", want: 5},
+	{group: "Other", a: "so😊me text", b: "😊😊some tex😊t😊", want: 5},
+	{group: "Other", a: "so😊me text", b: "😊😊some tex😊x😊t", want: 6},
+}
+
+// TestComputeDistance
+func TestComputeDistance(t *testing.T) {
+	for _, tc := range testCases {
+		a := tc.a
+		b := tc.b
+		da := agnivade.ComputeDistance(a, b)
+		dar := arbovm.Distance(a, b)
+		ddg := dgryski.Levenshtein([]rune(a), []rune(b))
+
+		if da != tc.want || da != dar || da != ddg {
+			t.Errorf("ComputeDistance(%s,%s) returned %d, want %d,  %d (arbovm), %d (dgryski)",
+				a, b, da, tc.want, dar, ddg)
 		}
 	}
 }
