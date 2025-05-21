@@ -37,44 +37,56 @@ func main() {
 
 ```
 
-Benchmarks
-----------
+Benchmarks and comparisons with other libraries
+-----------------------------------------------
+
+Use `make benchAll COUNT=10` to run the benchmarks
 
 ```
-name              time/op
-Simple/ASCII-4     330ns ± 2%
-Simple/French-4    617ns ± 2%
-Simple/Nordic-4   1.16µs ± 4%
-Simple/Tibetan-4  1.05µs ± 1%
+goos: linux
+goarch: amd64
+pkg: github.com/agnivade/levenshtein
+cpu: AMD Ryzen 7 7840U w/ Radeon  780M Graphics     
+                 │ DistanceAgnivade │             DistanceArbovm             │            DistanceDgryski             │
+                 │      sec/op      │    sec/op     vs base                  │    sec/op     vs base                  │
+*/Edge-16               96.05n ± 1%   498.10n ± 1%   +418.56% (p=0.000 n=10)   511.35n ± 2%   +432.35% (p=0.000 n=10)
+*/ASCII-16              163.9n ± 0%    402.5n ± 1%   +145.50% (p=0.000 n=10)    428.3n ± 2%   +161.27% (p=0.000 n=10)
+*/French-16             176.8n ± 3%    291.5n ± 1%    +64.88% (p=0.000 n=10)    321.2n ± 1%    +81.70% (p=0.000 n=10)
+*/Nordic-16             184.5n ± 0%    590.9n ± 1%   +220.27% (p=0.000 n=10)    613.2n ± 4%   +232.38% (p=0.000 n=10)
+*/Tibetan-16            266.6n ± 0%    492.1n ± 0%    +84.53% (p=0.000 n=10)    520.8n ± 1%    +95.31% (p=0.000 n=10)
+*/Long_lead-16          259.0n ± 1%   4178.5n ± 1%  +1513.63% (p=0.000 n=10)   4451.5n ± 2%  +1619.06% (p=0.000 n=10)
+*/Long_middle-16        292.4n ± 1%   4022.0n ± 1%  +1275.51% (p=0.000 n=10)   4243.5n ± 0%  +1351.27% (p=0.000 n=10)
+*/Long_trail-16         375.7n ± 1%   4378.0n ± 1%  +1065.29% (p=0.000 n=10)   4469.5n ± 1%  +1089.65% (p=0.000 n=10)
+*/Long_diff-16          3.589µ ± 1%    5.117µ ± 1%    +42.59% (p=0.000 n=10)    5.219µ ± 2%    +45.42% (p=0.000 n=10)
+geomean                 288.8n         1.229µ        +325.53%                   1.290µ        +346.70%
 
-name              alloc/op
-Simple/ASCII-4     96.0B ± 0%
-Simple/French-4     128B ± 0%
-Simple/Nordic-4     192B ± 0%
-Simple/Tibetan-4    144B ± 0%
+                 │ DistanceAgnivade │            DistanceArbovm            │           DistanceDgryski            │
+                 │       B/op       │    B/op      vs base                 │    B/op      vs base                 │
+*/Edge-16                0.0 ± 0%      344.0 ± 0%         ? (p=0.000 n=10)    344.0 ± 0%         ? (p=0.000 n=10)
+*/ASCII-16               0.0 ± 0%      240.0 ± 0%         ? (p=0.000 n=10)    240.0 ± 0%         ? (p=0.000 n=10)
+*/French-16              0.0 ± 0%      128.0 ± 0%         ? (p=0.000 n=10)    128.0 ± 0%         ? (p=0.000 n=10)
+*/Nordic-16              0.0 ± 0%      192.0 ± 0%         ? (p=0.000 n=10)    192.0 ± 0%         ? (p=0.000 n=10)
+*/Tibetan-16             0.0 ± 0%      160.0 ± 0%         ? (p=0.000 n=10)    160.0 ± 0%         ? (p=0.000 n=10)
+*/Long_lead-16         544.0 ± 0%     1056.0 ± 0%   +94.12% (p=0.000 n=10)   1056.0 ± 0%   +94.12% (p=0.000 n=10)
+*/Long_middle-16       544.0 ± 0%     1056.0 ± 0%   +94.12% (p=0.000 n=10)   1056.0 ± 0%   +94.12% (p=0.000 n=10)
+*/Long_trail-16        576.0 ± 0%     1152.0 ± 0%  +100.00% (p=0.000 n=10)   1152.0 ± 0%  +100.00% (p=0.000 n=10)
+*/Long_diff-16         752.0 ± 0%     1184.0 ± 0%   +57.45% (p=0.000 n=10)   1184.0 ± 0%   +57.45% (p=0.000 n=10)
+geomean                           ¹    429.2       ?                          429.2       ?
+¹ summaries must be >0 to compute geomean
 
-name              allocs/op
-Simple/ASCII-4      1.00 ± 0%
-Simple/French-4     1.00 ± 0%
-Simple/Nordic-4     1.00 ± 0%
-Simple/Tibetan-4    1.00 ± 0%
-```
+                 │ DistanceAgnivade │            DistanceArbovm            │           DistanceDgryski            │
+                 │    allocs/op     │ allocs/op   vs base                  │ allocs/op   vs base                  │
+*/Edge-16              0.000 ± 0%     9.000 ± 0%        ? (p=0.000 n=10)     9.000 ± 0%        ? (p=0.000 n=10)
+*/ASCII-16             0.000 ± 0%     3.000 ± 0%        ? (p=0.000 n=10)     3.000 ± 0%        ? (p=0.000 n=10)
+*/French-16            0.000 ± 0%     1.000 ± 0%        ? (p=0.000 n=10)     1.000 ± 0%        ? (p=0.000 n=10)
+*/Nordic-16            0.000 ± 0%     1.000 ± 0%        ? (p=0.000 n=10)     1.000 ± 0%        ? (p=0.000 n=10)
+*/Tibetan-16           0.000 ± 0%     1.000 ± 0%        ? (p=0.000 n=10)     1.000 ± 0%        ? (p=0.000 n=10)
+*/Long_lead-16         2.000 ± 0%     3.000 ± 0%  +50.00% (p=0.000 n=10)     3.000 ± 0%  +50.00% (p=0.000 n=10)
+*/Long_middle-16       2.000 ± 0%     3.000 ± 0%  +50.00% (p=0.000 n=10)     3.000 ± 0%  +50.00% (p=0.000 n=10)
+*/Long_trail-16        2.000 ± 0%     3.000 ± 0%  +50.00% (p=0.000 n=10)     3.000 ± 0%  +50.00% (p=0.000 n=10)
+*/Long_diff-16         3.000 ± 0%     3.000 ± 0%        ~ (p=1.000 n=10) ¹   3.000 ± 0%        ~ (p=1.000 n=10) ¹
+geomean                           ²   2.350       ?                          2.350       ?
+¹ all samples are equal
+² summaries must be >0 to compute geomean
 
-Comparisons with other libraries
---------------------------------
-
-```
-name                     time/op
-Leven/ASCII/agniva-4      353ns ± 1%
-Leven/ASCII/arbovm-4      485ns ± 1%
-Leven/ASCII/dgryski-4     395ns ± 0%
-Leven/French/agniva-4     648ns ± 1%
-Leven/French/arbovm-4     791ns ± 0%
-Leven/French/dgryski-4    682ns ± 0%
-Leven/Nordic/agniva-4    1.28µs ± 1%
-Leven/Nordic/arbovm-4    1.52µs ± 1%
-Leven/Nordic/dgryski-4   1.32µs ± 1%
-Leven/Tibetan/agniva-4   1.12µs ± 1%
-Leven/Tibetan/arbovm-4   1.31µs ± 0%
-Leven/Tibetan/dgryski-4  1.16µs ± 0%
 ```
