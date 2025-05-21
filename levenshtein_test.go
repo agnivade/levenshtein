@@ -3,6 +3,7 @@ package levenshtein_test
 import (
 	"math/rand"
 	"testing"
+	"time"
 
 	agnivade "github.com/agnivade/levenshtein"
 	arbovm "github.com/arbovm/levenshtein"
@@ -197,46 +198,59 @@ func BenchmarkAll(b *testing.B) {
 // Fuzzing
 // ----------------------------------------------
 
-func FuzzComputeDistanceDifferent(f *testing.F) {
-	testcases := []struct{ a, b string }{
-		{"levenshtein", "frankenstein"},
-		{"resumé and café", "resumés and cafés"},
-		{"Hafþór Júlíus Björnsson", "Hafþor Julius Bjornsson"},
-		{"།་གམ་འས་པ་་མ།", "།་གམའས་པ་་མ"},
-		{`_p~𕍞`, `b잖PwN`},
-		{`7ȪJR`, `6L)wӝ`},
-		{`_p~𕍞`, `Y>q8օ݌`},
-	}
-	for _, tc := range testcases {
+// FuzzComputeDistance is a fuzz test function that compares current levenshtein function with other implementation.
+// It generates random rune sequences for seeds,
+// Additionally, it also tests if the levenshtein distance is at most the hamming distance.
+func FuzzComputeDistance(f *testing.F) {
+	const (
+		nbSeeds    = 100 // number of seeds.
+		maxLen     = 100 // maximum length in runes of rune array ra.
+		maxChanges = 20  // maximum number of changes from rune array ra to rune array rb.
+	)
+
+	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	// Add all test cases.
+	for _, tc := range testCases {
 		f.Add(tc.a, tc.b)
 	}
+
+	// Add random seeds.
+	for i := 0; i < nbSeeds; i++ {
+		ra := RandRunes(rnd, maxLen)
+		rb := RandRunesChange(rnd, ra, maxChanges)
+
+		f.Add(string(ra), string(rb))
+	}
+
 	f.Fuzz(func(t *testing.T, a, b string) {
-		n := agnivade.ComputeDistance(a, b)
-		if n < 0 {
-			t.Errorf("Distance can not be negative: %d, a: %q, b: %q", n, a, b)
+		da := agnivade.ComputeDistance(a, b)
+		dar := arbovm.Distance(a, b)
+		ddg := dgryski.Levenshtein([]rune(a), []rune(b))
+
+		if da != dar || da != ddg {
+			t.Errorf("ComputeDistance(%s,%s) returned %d, want %d (arbovm), %d (dgryski)", a, b, da, dar, ddg)
 		}
-		if n > len(a)+len(b) {
-			t.Errorf("Distance can not be greater than sum of lengths of a and b: %d, a: %q, b: %q", n, a, b)
+
+		dh := pseudoHammingDistance([]rune(a), []rune(b))
+		if da > dh {
+			t.Errorf("ComputeDistance(%s,%s) returned %d, want at most %d (hamming distance)", a, b, da, dh)
 		}
 	})
 }
 
-func FuzzComputeDistanceEqual(f *testing.F) {
-	testcases := []string{
-		"levenshtein", "frankenstein",
-		"resumé and café", "resumés and cafés",
-		"Hafþór Júlíus Björnsson", "Hafþor Julius Bjornsson",
-		"།་གམ་འས་པ་་མ།", "།་གམའས་པ་་མ",
+// pseudoHammingDistance returns the hamming distance plus the length difference between 2 rune arrays.
+func pseudoHammingDistance(a, b []rune) int {
+	if len(a) > len(b) {
+		a, b = b, a
 	}
-	for _, tc := range testcases {
-		f.Add(tc)
-	}
-	f.Fuzz(func(t *testing.T, a string) {
-		n := agnivade.ComputeDistance(a, a)
-		if n != 0 {
-			t.Errorf("Distance must be zero: %d, a: %q", n, a)
+	d := len(b) - len(a)
+	for i, r := range a {
+		if r != b[i] {
+			d++
 		}
-	})
+	}
+	return d
 }
 
 // Random runes generation functions
