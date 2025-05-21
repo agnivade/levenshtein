@@ -25,7 +25,7 @@ benchAll:
 	go test -bench="BenchmarkDistanceAgnivade" -benchmem -count=${COUNT} | tee bench_agnivade.out
 	go test -bench="BenchmarkDistanceArbovm" -benchmem -count=${COUNT} | tee bench_arbovm.out
 	go test -bench="BenchmarkDistanceDgryski" -benchmem -count=${COUNT} | tee bench_dgryski.out
-	benchstat -col=.name bench_agnivade.out bench_arbovm.out bench_dgryski.out
+	benchstat -col=.name bench_agnivade.out bench_arbovm.out bench_dgryski.out | tee bench_all.out
 
 # cover runs the tests and opens a web browser displaying annotated source code
 cover: test
