@@ -30,6 +30,10 @@ func ComputeDistance(a, b string) int {
 		return 0
 	}
 
+	if isASCII(a) && isASCII(b) {
+		return computeDistanceASCII(a, b)
+	}
+
 	// We need to convert to []rune if the strings are non-ASCII.
 	// This could be avoided by using utf8.RuneCountInString
 	// and then doing some juggling with rune indices,
@@ -48,6 +52,86 @@ func ComputeDistance(a, b string) int {
 	// Remove leading identical runes.
 	s1, s2 = trimLongestCommonPrefix(s1, s2)
 
+	return computeDistanceRunes(s1, s2)
+}
+
+func isASCII(s string) bool {
+	if len(s) == 0 {
+		return true
+	}
+	if s[0] >= utf8.RuneSelf || s[len(s)-1] >= utf8.RuneSelf {
+		return false
+	}
+	for i := 1; i < len(s)-1; i++ {
+		if s[i] >= utf8.RuneSelf {
+			return false
+		}
+	}
+	return true
+}
+
+func computeDistanceASCII(s1, s2 string) int {
+	// swap to save some memory O(min(a,b)) instead of O(a)
+	if len(s1) > len(s2) {
+		s1, s2 = s2, s1
+	}
+
+	// remove trailing identical bytes.
+	for len(s1) > 0 && s1[len(s1)-1] == s2[len(s2)-1] {
+		s1 = s1[:len(s1)-1]
+		s2 = s2[:len(s2)-1]
+	}
+
+	// Remove leading identical bytes.
+	var i int
+	for i < len(s1) && s1[i] == s2[i] {
+		i++
+	}
+	s1 = s1[i:]
+	s2 = s2[i:]
+
+	lenS1 := len(s1)
+	lenS2 := len(s2)
+
+	// Init the row.
+	var x []uint16
+	if lenS1+1 > minLengthThreshold {
+		x = make([]uint16, lenS1+1)
+	} else {
+		// We make a small optimization here for small strings.
+		// Because a slice of constant length is effectively an array,
+		// it does not allocate. So we can re-slice it to the right length
+		// as long as it is below a desired threshold.
+		x = make([]uint16, minLengthThreshold)
+		x = x[:lenS1+1]
+	}
+
+	// we start from 1 because index 0 is already 0.
+	for i := 1; i < len(x); i++ {
+		x[i] = uint16(i)
+	}
+
+	// hoist bounds checks out of the loops
+	_ = x[lenS1]
+	y := x[1:]
+	y = y[:lenS1]
+	// fill in the rest
+	for i := 0; i < lenS2; i++ {
+		prev := uint16(i + 1)
+		for j := 0; j < lenS1; j++ {
+			current := x[j] // match
+			if s2[i] != s1[j] {
+				current = min(x[j], prev, y[j]) + 1
+			}
+			x[j] = prev
+			prev = current
+		}
+		x[lenS1] = prev
+	}
+	return int(x[lenS1])
+}
+
+func computeDistanceRunes(s1, s2 []rune) int {
 	lenS1 := len(s1)
 	lenS2 := len(s2)
 
