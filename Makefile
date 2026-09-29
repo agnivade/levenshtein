@@ -10,4 +10,4 @@ test:
 	go test -race -v -coverprofile=coverage.txt -covermode=atomic
 
 bench:
-	go test -run=XXX -bench=. -benchmem -count=5
+	cd benchmark && go test -run=XXX -bench=. -benchmem -count=5
