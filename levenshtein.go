@@ -52,21 +52,21 @@ func ComputeDistance(a, b string) int {
 	lenS2 := len(s2)
 
 	// Init the row.
-	var x []uint16
+	var x []int
 	if lenS1+1 > minLengthThreshold {
-		x = make([]uint16, lenS1+1)
+		x = make([]int, lenS1+1)
 	} else {
 		// We make a small optimization here for small strings.
 		// Because a slice of constant length is effectively an array,
 		// it does not allocate. So we can re-slice it to the right length
 		// as long as it is below a desired threshold.
-		x = make([]uint16, minLengthThreshold)
+		x = make([]int, minLengthThreshold)
 		x = x[:lenS1+1]
 	}
 
 	// we start from 1 because index 0 is already 0.
 	for i := 1; i < len(x); i++ {
-		x[i] = uint16(i)
+		x[i] = i
 	}
 
 	// hoist bounds checks out of the loops
@@ -75,7 +75,7 @@ func ComputeDistance(a, b string) int {
 	y = y[:lenS1]
 	// fill in the rest
 	for i := 0; i < lenS2; i++ {
-		prev := uint16(i + 1)
+		prev := i + 1
 		for j := 0; j < lenS1; j++ {
 			current := x[j] // match
 			if s2[i] != s1[j] {
@@ -86,7 +86,7 @@ func ComputeDistance(a, b string) int {
 		}
 		x[lenS1] = prev
 	}
-	return int(x[lenS1])
+	return x[lenS1]
 }
 
 func trimLongestCommonSuffix(a, b []rune) ([]rune, []rune) {

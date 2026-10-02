@@ -1,6 +1,7 @@
 package levenshtein_test
 
 import (
+	"strings"
 	"testing"
 
 	agnivade "github.com/agnivade/levenshtein"
@@ -32,6 +33,17 @@ func TestSanity(t *testing.T) {
 			t.Errorf("Test[%d]: ComputeDistance(%q,%q) returned %v, want %v",
 				i, d.a, d.b, n, d.want)
 		}
+	}
+}
+
+func TestDistanceAboveUint16(t *testing.T) {
+	b := strings.Repeat("b", 65535)
+	if n := agnivade.ComputeDistance("a", b); n != 65535 {
+		t.Fatalf("65535: got %d, want 65535", n)
+	}
+	b = strings.Repeat("b", 65536)
+	if n := agnivade.ComputeDistance("a", b); n != 65536 {
+		t.Fatalf("65536: got %d, want 65536", n)
 	}
 }
 
