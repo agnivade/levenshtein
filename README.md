@@ -6,9 +6,7 @@ levenshtein ![Build Status](https://github.com/agnivade/levenshtein/actions/work
 The library is fully capable of working with non-ascii strings. But the strings are not normalized. That is left as a user-dependant use case. Please normalize the strings before passing it to the library if you have such a requirement.
 - https://blog.golang.org/normalization
 
-#### Limitation
-
-As a performance optimization, the library can handle strings only up to 65536 characters (runes). If you need to handle strings larger than that, please pin to version 1.0.3.
+Strings of 65535 runes or fewer keep the uint16 row. Longer strings use an int row, so the distance does not wrap.
 
 Install
 -------

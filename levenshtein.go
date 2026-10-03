@@ -48,25 +48,33 @@ func ComputeDistance(a, b string) int {
 	// Remove leading identical runes.
 	s1, s2 = trimLongestCommonPrefix(s1, s2)
 
+	// A uint16 row holds a distance through 65535. Longer strings use int.
+	if len(s2) > 65535 {
+		return distance[int](s1, s2)
+	}
+	return int(distance[uint16](s1, s2))
+}
+
+func distance[T uint16 | int](s1, s2 []rune) T {
 	lenS1 := len(s1)
 	lenS2 := len(s2)
 
 	// Init the row.
-	var x []int
+	var x []T
 	if lenS1+1 > minLengthThreshold {
-		x = make([]int, lenS1+1)
+		x = make([]T, lenS1+1)
 	} else {
 		// We make a small optimization here for small strings.
 		// Because a slice of constant length is effectively an array,
 		// it does not allocate. So we can re-slice it to the right length
 		// as long as it is below a desired threshold.
-		x = make([]int, minLengthThreshold)
+		x = make([]T, minLengthThreshold)
 		x = x[:lenS1+1]
 	}
 
 	// we start from 1 because index 0 is already 0.
 	for i := 1; i < len(x); i++ {
-		x[i] = i
+		x[i] = T(i)
 	}
 
 	// hoist bounds checks out of the loops
@@ -75,7 +83,7 @@ func ComputeDistance(a, b string) int {
 	y = y[:lenS1]
 	// fill in the rest
 	for i := 0; i < lenS2; i++ {
-		prev := i + 1
+		prev := T(i + 1)
 		for j := 0; j < lenS1; j++ {
 			current := x[j] // match
 			if s2[i] != s1[j] {
