@@ -1,6 +1,7 @@
 package levenshtein_test
 
 import (
+	"strings"
 	"testing"
 
 	agnivade "github.com/agnivade/levenshtein"
@@ -186,4 +187,17 @@ func FuzzComputeDistanceEqual(f *testing.F) {
 			t.Errorf("Distance must be zero: %d, a: %q", n, a)
 		}
 	})
+}
+
+func TestLongASCII(t *testing.T) {
+	a := strings.Repeat("a", 2000)
+	b := strings.Repeat("b", 2000)
+	n := agnivade.ComputeDistance(a, b)
+	if n != 2000 {
+		t.Fatalf("ComputeDistance(a*2000, b*2000) = %d, want 2000", n)
+	}
+	// Identical long strings should still be zero without running the DP.
+	if n := agnivade.ComputeDistance(a, a); n != 0 {
+		t.Fatalf("ComputeDistance(identical long) = %d, want 0", n)
+	}
 }
