@@ -3,8 +3,16 @@ levenshtein ![Build Status](https://github.com/agnivade/levenshtein/actions/work
 
 [Go](http://golang.org) package to calculate the [Levenshtein Distance](http://en.wikipedia.org/wiki/Levenshtein_distance)
 
-The library is fully capable of working with non-ascii strings. But the strings are not normalized. That is left as a user-dependant use case. Please normalize the strings before passing it to the library if you have such a requirement.
-- https://blog.golang.org/normalization
+The library is fully capable of working with non-ASCII Unicode strings. Internally, Go ranges over strings as Unicode code points (runes), so the distance is calculated over the rune sequences supplied to the library.
+
+The library does not normalize input strings. Canonically equivalent Unicode text can therefore produce different distances when the underlying code-point sequences differ. If canonical equivalence matters for an application, normalize both inputs to the same Unicode normalization form before passing them to the library.
+
+Unicode code points are also not always equivalent to user-perceived characters. Some visible characters can consist of multiple code points, such as a base character followed by combining marks or an emoji sequence. Applications that require one visible character to count as one edit may need to segment text into grapheme clusters before applying an edit-distance algorithm.
+
+Normalization and segmentation are preprocessing decisions; they do not change the Levenshtein recurrence itself, but they can change the sequence on which the distance is calculated.
+
+- https://unicode.org/reports/tr15/
+- https://unicode.org/reports/tr29/
 
 #### Limitation
 
